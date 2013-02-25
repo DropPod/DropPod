@@ -9,7 +9,7 @@ export SSL_CERT_FILE=/usr/local/share/ca-bundle.crt
 
 case "$command" in
   pod | pods )
-    cat <(echo "import '${DropPod}/modules/baseline/manifests/__types__.pp'") <(for pod; do ruby -r open-uri -e "puts open('$pod').read"; done) | ${DropPod}/bin/puppet apply
+    cat <(echo "import '${DropPod}/modules/baseline/manifests/__types__.pp'") <(for pod; do ruby -r open-uri -e "puts open('$pod').read"; done) | ${DropPod}/binstubs/puppet apply
     ;;
   * )
     echo "Unrecognized command '${command}'"
