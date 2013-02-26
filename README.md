@@ -27,7 +27,7 @@ scratch, you can start with a "Beachhead" install:
 
 ``` shell
 # Install Xcode CLT from https://connect.apple.com
-$ bash -c "$(curl -fsSL https://example.com/launch)"
+$ bash -c "$(curl -fsSL https://raw.github.com/DropPod/DropPod/launch)"
 ```
 
 This script pulls down a minimal **Drop Pod** installation, ready for you to
@@ -38,7 +38,7 @@ as as starting point), you can launch a "Spearhead" install:
 
 ``` shell
 # Install Xcode CLT from https://connect.apple.com
-$ bash -c "$(curl -fsSL https://example.com/launch)" http://example.com/config.pp
+$ bash -c "$(curl -fsSL https://raw.github.com/DropPod/DropPod/launch)" -- https://gist.github.com/pvande/5035792/raw/apps.pp
 ```
 
 Once you've got a basic installation, you've got [Git][Git],
@@ -50,8 +50,8 @@ declarative configuration language (care of [Puppet][Puppet]) to create "pods"
 workstation setup. Pods may range in size from managing the creation of a
 single file or symlink, through managing the full set of applications you use,
 setting up the projects you work on, and configuring your OS preferences to
-match your exacting standards. This composable modularity allows you a high degree of freedom in your
-setup.
+match your exacting standards. This composable modularity allows you a high
+degree of freedom in your setup.
 
 At its most basic level, the configuration language follows this pattern:
 
