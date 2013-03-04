@@ -31,7 +31,7 @@ define application($source, $ensure="installed") {
 #      content => 'export PROMPT="[%n@%m:%c]%#"',
 #    }
 define rcfile($content=undef, $source=undef) {
-  file { "/User/${id}/.profile.d/${name}.sh":
+  file { "/Users/${id}/.profile.d/${name}.sh":
     ensure  => present,
     mode    => 644,
     owner   => $id,
