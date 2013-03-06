@@ -93,7 +93,7 @@ tarballs.
 * *name* : A unique name identifying the application.
 * *source* : The URL from which the application can be downloaded.
 * *ensure* : The desired state for the application.  Accepted values are
-`installed` (the default) and `latest`.
+             `installed` (the default) and `latest`.
 
 #### rcfile ####
 
@@ -101,15 +101,10 @@ This type adds new shell configuration files, to be automatically loaded on the
 next terminal creation.
 
 * *name* - A unique name for the configuration file; ideally named after the
-         configured behaviors.
+           configured behaviors.
 * *content* - The configuration file's content; if absent, defers to `source`
 * *source* - Indicates that the the configuration file should be copied from
              the specified location; if absent, defers to `content`.
-
-* *name* : A unique name identifying the application.
-* *source* : The URL from which the application can be downloaded.
-* *ensure* : The desired state for the application.  Accepted values are
-`installed` (the default) and `latest`.
 
 Future
 ======
