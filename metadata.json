@@ -1,0 +1,12 @@
+{
+  "name": "DropPod/baseline",
+  "version": "0.0.0",
+  "summary": "Precision OS X workstation deployments falling out of the clouds",
+  "source": "https://github.com/DropPod/DropPod.git",
+  "author": "Pieter van de Bruggen",
+  "license": "MIT",
+  "dependencies": [
+    { "name": "DropPod/homebrew", "version": "0.x" },
+    { "name": "DropPod/dotapp", "version": "0.x" }
+  ]
+}
