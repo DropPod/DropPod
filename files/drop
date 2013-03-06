@@ -11,6 +11,9 @@ case "$command" in
   pod | pods )
     cat <(echo "include baseline::types") <(for pod; do ruby -r open-uri -e "puts open('$pod').read"; done) | ${DropPod}/binstubs/puppet apply
     ;;
+  module )
+    ${DropPod}/binstubs/puppet module install "$@"
+    ;;
   * )
     echo "Unrecognized command '${command}'"
     exit 1
