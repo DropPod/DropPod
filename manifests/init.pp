@@ -17,4 +17,14 @@ class baseline {
     ensure   => installed,
     provider => 'homebrew',
   }
+
+  # Given the platform we're on, there's no reason we shouldn't configure the
+  # osxkeychain credential helper by default.
+  exec { "Configure git-credential-osxkeychain":
+    environment => ["HOME=/Users/${id}"],
+    command     => "git config --global credential.helper osxkeychain",
+    unless      => "test `git config --global credential.helper` = 'osxkeychain'",
+    path        => ["/usr/local/bin", "/bin"],
+    require     => Package['git'],
+  }
 }
