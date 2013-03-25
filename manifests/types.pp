@@ -39,3 +39,33 @@ define rcfile($content=undef, $source=undef) {
     source  => $source,
   }
 }
+
+# A type for managing development projects.
+#
+# * name - The name of the project's directory
+# * [source] - Indicates the repository that the project should be cloned from;
+#              if absent, defaults to `title`
+# * [target] - The directory the project should be cloned into; if absent,
+#              defaults to `~/Projects`
+#
+#    project { 'DropPod':
+#      source => 'https://github.com/DropPod/DropPod.git',
+#    }
+define project($source = $title, $target = "/Users/${id}/Projects") {
+  # TODO: Remove this logic duplicated from the repository type.
+  if ($name =~ /\//) {
+    $dirname = regsubst("${source}", ".*/([^.]*)([.]git)?", "\\1")
+  } else {
+    $dirname = $name
+  }
+  $directory = "${target}/${dirname}"
+  
+  repository { "${title}": name => $name, source => $source, target => $target }
+  exec { "Configure Project '${title}'":
+    command     => "/usr/local/bin/drop pod ${directory}/.development.pp",
+    logoutput   => true,
+    onlyif      => "/bin/test -f ${directory}/.development.pp",
+    environment => ["HOME=/Users/${id}", ""],
+    require     => [Repository[$title]],
+  }
+}
