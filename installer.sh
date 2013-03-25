@@ -47,6 +47,7 @@ mkdir ${tmp}/modules
 git clone --depth 1 git://github.com/DropPod/DropPod.git ${tmp}/modules/baseline
 git clone --depth 1 git://github.com/DropPod/dotapp.git ${tmp}/modules/dotapp
 git clone --depth 1 git://github.com/DropPod/homebrew.git ${tmp}/modules/homebrew
+git clone --depth 1 git://github.com/DropPod/repository.git ${tmp}/modules/repository
 
 talk "Creating required binstubs..."
 mkdir ${tmp}/binstubs
