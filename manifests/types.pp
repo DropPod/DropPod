@@ -51,6 +51,8 @@ define rcfile($content=undef, $source=undef) {
 #    project { 'DropPod':
 #      source => 'https://github.com/DropPod/DropPod.git',
 #    }
+#
+# TODO: Support alternate "environments".
 define project($source = $title, $target = "/Users/${id}/Projects") {
   # TODO: Remove this logic duplicated from the repository type.
   if ($name =~ /\//) {
@@ -64,8 +66,12 @@ define project($source = $title, $target = "/Users/${id}/Projects") {
   exec { "Configure Project '${title}'":
     command     => "/usr/local/bin/drop pod ${directory}/.development.pp",
     logoutput   => true,
-    onlyif      => "/bin/test -f ${directory}/.development.pp",
-    environment => ["HOME=/Users/${id}", ""],
+    unless      => "/bin/test ! -f ${directory}/.development.pp || /usr/local/bin/drop test ${directory}/.development.pp",
+    environment => [
+      "HOME=/Users/${id}",
+      "FACTER_PROJECT=${directory}",
+      "FACTER_PROJECT_NAME=${name}",
+    ],
     require     => [Repository[$title]],
   }
 }
