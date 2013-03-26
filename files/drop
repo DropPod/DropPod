@@ -13,7 +13,8 @@ case "$command" in
     ;;
   test )
     cat <(echo "include baseline::types") <(for pod; do /usr/bin/ruby -r open-uri -e "puts open('$pod').read"; done) | ${DropPod}/binstubs/puppet apply --noop 2>&1 | grep '(noop)' -qc
-    exec [[ $? -ne 0 ]]
+    [[ $? -ne 0 ]]
+    exit $?
     ;;
   module )
     ${DropPod}/binstubs/puppet module install "$@"
