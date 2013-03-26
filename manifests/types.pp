@@ -67,6 +67,7 @@ define project($source = $title, $target = "/Users/${id}/Projects") {
     command     => "/usr/local/bin/drop pod ${directory}/.development.pp",
     logoutput   => true,
     unless      => "/bin/test ! -f ${directory}/.development.pp || /usr/local/bin/drop test ${directory}/.development.pp",
+    timeout     => 0,
     environment => [
       "HOME=/Users/${id}",
       "FACTER_PROJECT=${directory}",
