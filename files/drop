@@ -17,10 +17,48 @@ case "$command" in
     exit $?
     ;;
   module )
-    ${DropPod}/binstubs/puppet module install "$@"
+    modules="$(ls $DropPod/modules)"
+    ${DropPod}/binstubs/puppet module install "$@" || exit 1
+    installed=`echo "$modules" | comm -13 - <(ls /usr/local/DropPod/modules/) | uniq`
+
+    pre=""
+    post=""
+    for mod in $installed; do
+      if (${DropPod}/binstubs/puppet apply --noop -e "include ${mod}::sudo::pre" &>/dev/null); then
+        pre="${pre} ${mod}"
+      fi
+      if (${DropPod}/binstubs/puppet apply --noop -e "include ${mod}::sudo::post" &>/dev/null); then
+        post="${post} ${mod}"
+      fi
+    done
+
+    for mod in $installed; do
+      sudo -v
+      (
+        if (echo "$pre" | grep "$mod") &>/dev/null; then
+          sudo ${DropPod}/binstubs/puppet apply -e "include ${mod}::sudo::pre" &
+          pid=$!
+          while ps -p $pid &>/dev/null; do sleep 1; sudo -v; done
+          wait %%
+        fi
+      ) &&
+      (
+        ${DropPod}/binstubs/puppet apply --noop -e "include ${mod}" &>/dev/null &&
+        (
+          ${DropPod}/binstubs/puppet apply -e "include ${mod}" &
+          pid=$!
+          while ps -p $pid &>/dev/null; do sleep 1; sudo -v; done
+          wait %%
+        )
+      ) &&
+      (
+        if (echo "$post" | grep "$mod") &>/dev/null; then
+          sudo ${DropPod}/binstubs/puppet apply -e "include ${mod}::sudo::post"
+        fi
+      )
+    done
     ;;
   * )
     echo "Unrecognized command '${command}'"
     exit 1
 esac
-
