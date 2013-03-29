@@ -33,7 +33,7 @@ case "$command" in
     done
 
     for mod in $installed; do
-      sudo -v
+      ([[ -n "$pre" ]] || [[ -n "$post" ]]) && sudo -v
       (
         if (echo "$pre" | grep "$mod") &>/dev/null; then
           sudo ${DropPod}/binstubs/puppet apply -e "include ${mod}::sudo::pre" &
@@ -46,8 +46,10 @@ case "$command" in
         ${DropPod}/binstubs/puppet apply --noop -e "include ${mod}" &>/dev/null &&
         (
           ${DropPod}/binstubs/puppet apply -e "include ${mod}" &
-          pid=$!
-          while ps -p $pid &>/dev/null; do sleep 1; sudo -v; done
+          if ([[ -n "$pre" ]] || [[ -n "$post" ]]); then
+            pid=$!
+            while ps -p $pid &>/dev/null; do sleep 1; sudo -v; done
+          fi
           wait %%
         )
       ) &&
