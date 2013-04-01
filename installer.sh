@@ -75,7 +75,7 @@ if [[ -z "${modules}" ]]; then
 fi
 
 talk "Launching Drop Pod..."
-${tmp}/binstubs/puppet apply -e "class { 'baseline': }"
+${tmp}/binstubs/puppet apply -e "class { 'baseline': }" --trace --debug
 mv ${tmp} /usr/local/DropPod
 
 if [[ -n "${modules}" ]]; then
