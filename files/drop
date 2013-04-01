@@ -36,7 +36,6 @@ case "$command" in
       if [[ -n "$pre" ]] || [[ -n "$post" ]]; then
         sudo -v
         (while true; do sudo -vS < /dev/null; sleep 1; done) &
-        pid=$!
       fi
 
       (
@@ -54,7 +53,7 @@ case "$command" in
         fi
       )
 
-      [[ -n "$pid" ]] && kill $pid &> /dev/null
+      ([[ -n "$pre" ]] || [[ -n "$post" ]]) && kill %1 &> /dev/null
     done
     ;;
   * )
