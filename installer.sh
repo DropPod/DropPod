@@ -57,6 +57,8 @@ cp ${tmp}/modules/baseline/files/puppet-wrapper.sh ${tmp}/binstubs/puppet
 if [[ -n "$@" ]]; then
   talk "Scanning Pods for required modules..."
 
+  (while true; do sudo -v < /dev/null; sleep 1; done)
+
   modules=$(
     (for pod; do echo "${pod}"; done) |
     /usr/bin/ruby -r open-uri -ne "puts open(\$_).read.grep(/^\#@/).join('').gsub(/^\#@\s*([^#\s]+).*$/, '\1')" |
@@ -68,6 +70,7 @@ talk "Clearing a suitable landing site..."
 sudo ${tmp}/binstubs/puppet apply -e "class { 'baseline::sudo': }"
 
 if [[ -z "${modules}" ]]; then
+  kill %1
   sudo -k
   notice "Super-user permissions abdicated."
 fi
@@ -78,6 +81,7 @@ mv ${tmp} /usr/local/DropPod
 
 if [[ -n "${modules}" ]]; then
   talk "Installing required modules..."
+  kill %1
   for mod in $modules; do
     /usr/local/bin/drop module "${mod}"
   done
