@@ -35,7 +35,7 @@ case "$command" in
     for mod in $installed; do
       if [[ -n "$pre" ]] || [[ -n "$post" ]]; then
         sudo -v
-        (while true; do sudo -v < /dev/null; sleep 1; done) &
+        (while true; do sudo -vS < /dev/null; sleep 1; done) &
         pid=$!
       fi
 
