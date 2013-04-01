@@ -57,8 +57,6 @@ cp ${tmp}/modules/baseline/files/puppet-wrapper.sh ${tmp}/binstubs/puppet
 if [[ -n "$@" ]]; then
   talk "Scanning Pods for required modules..."
 
-  (while true; do sudo -v; sleep 1; done) &
-
   modules=$(
     (for pod; do echo "${pod}"; done) |
     /usr/bin/ruby -r open-uri -ne "puts open(\$_).read.grep(/^\#@/).join('').gsub(/^\#@\s*([^#\s]+).*$/, '\1')" |
@@ -75,12 +73,11 @@ if [[ -z "${modules}" ]]; then
 fi
 
 talk "Launching Drop Pod..."
-${tmp}/binstubs/puppet apply -e "class { 'baseline': }" --trace --debug
+${tmp}/binstubs/puppet apply -e "class { 'baseline': }"
 mv ${tmp} /usr/local/DropPod
 
 if [[ -n "${modules}" ]]; then
   talk "Installing required modules..."
-  kill %1 &> /dev/null
   for mod in $modules; do
     /usr/local/bin/drop module "${mod}"
   done
