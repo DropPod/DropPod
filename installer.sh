@@ -57,7 +57,7 @@ cp ${tmp}/modules/baseline/files/puppet-wrapper.sh ${tmp}/binstubs/puppet
 if [[ -n "$@" ]]; then
   talk "Scanning Pods for required modules..."
 
-  (while true; do sudo -vS < /dev/null; sleep 1; done)
+  (while true; do sudo -vS < /dev/null; sleep 1; done) &
 
   modules=$(
     (for pod; do echo "${pod}"; done) |
