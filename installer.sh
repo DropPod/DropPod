@@ -34,7 +34,8 @@ brew() {
 
 notice "This script will require super-user access to perform some setup work."
 talk "Acquiring super-user permissions..."
-sudo true
+sudo -k
+sudo -v
 
 tmp=$(mktemp -d -t /tmp)
 
@@ -53,14 +54,33 @@ talk "Creating required binstubs..."
 mkdir ${tmp}/binstubs
 cp ${tmp}/modules/baseline/files/puppet-wrapper.sh ${tmp}/binstubs/puppet
 
+if [[ -n "$@" ]]; then
+  talk "Scanning Pods for required modules..."
+  modules=$(
+    (for pod; do echo "${pod}"; done) |
+    /usr/bin/ruby -r open-uri -ne "puts open(\$_).read.grep(/^\#@/).join('').gsub(/^\#@\s*([^#\s]+).*$/, '\1')" |
+    sort -u
+  )
+fi
+
 talk "Clearing a suitable landing site..."
 sudo ${tmp}/binstubs/puppet apply -e "class { 'baseline::sudo': }"
-sudo -k
-notice "Super-user permissions abdicated."
+
+if [[ -z "${modules}" ]]; then
+  sudo -k
+  notice "Super-user permissions abdicated."
+fi
 
 talk "Launching Drop Pod..."
 ${tmp}/binstubs/puppet apply -e "class { 'baseline': }"
 mv ${tmp} /usr/local/DropPod
+
+if [[ -n "${modules}" ]]; then
+  talk "Installing required modules..."
+  for mod in $modules; do
+    /usr/local/bin/drop module "${mod}"
+  done
+fi
 
 if [ $# -eq 0 ]; then
   notice 'Finished!  Close this terminal (or source your ~/.profile) to take advantage'
