@@ -58,7 +58,6 @@ if [[ -n "$@" ]]; then
   talk "Scanning Pods for required modules..."
 
   (while true; do sudo -v; sleep 1; done) &
-  pid=$!
 
   modules=$(
     (for pod; do echo "${pod}"; done) |
@@ -81,7 +80,7 @@ mv ${tmp} /usr/local/DropPod
 
 if [[ -n "${modules}" ]]; then
   talk "Installing required modules..."
-  kill $pid &> /dev/null
+  kill %1 &> /dev/null
   for mod in $modules; do
     /usr/local/bin/drop module "${mod}"
   done
