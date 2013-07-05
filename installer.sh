@@ -58,7 +58,7 @@ if [[ -n "$@" ]]; then
   talk "Scanning Pods for required modules..."
   modules=$(
     (for pod; do echo "${pod}"; done) |
-    /usr/bin/ruby -r open-uri -ne "puts open(\$_.chomp).read.grep(/^\#@/).join('').gsub(/^\#@\s*([^#\s]+).*$/, '\1')" |
+    /usr/bin/ruby -r open-uri -ne "puts mod = open(\$_.chomp).read.grep(/^\s*\#@/).join('').gsub(/^\s*\#@\s*([^#\s]+).*$/, '\1')" -e 'warn mod' |
     sort -u
   )
 fi
