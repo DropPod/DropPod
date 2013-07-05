@@ -39,8 +39,8 @@ sudo -v
 
 tmp=$(mktemp -d -t /tmp)
 
-fetch puppetlabs/facter 1.7.x
-fetch puppetlabs/puppet master
+fetch puppetlabs/facter 1.7.1
+fetch puppetlabs/puppet 3.1.0
 
 # TODO: This should be a series of module installs from the Forge.
 talk "Setting up baseline modules..."
