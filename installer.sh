@@ -76,6 +76,7 @@ mv ${tmp} /usr/local/DropPod
 if [[ -n "${modules}" ]]; then
   talk "Installing required modules..."
   for mod in $modules; do
+    talk "Installing ${mod}..."
     /usr/local/bin/drop module "${mod}"
   done
 fi
