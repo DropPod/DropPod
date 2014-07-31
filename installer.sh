@@ -57,15 +57,6 @@ talk "Creating required binstubs..."
 mkdir ${tmp}/binstubs
 cp ${tmp}/modules/baseline/files/puppet-wrapper.sh ${tmp}/binstubs/puppet
 
-if [[ -n "$@" ]]; then
-  talk "Scanning Pods for required modules..."
-  modules=$(
-    (for pod; do echo "${pod}"; done) |
-    /usr/bin/ruby -r open-uri -ne "puts mod = open(\$_.chomp).read.grep(/^\s*\#@/).join('').gsub(/^\s*\#@\s*([^#\s]+).*$/, '\1')" -e 'warn mod' |
-    sort -u
-  )
-fi
-
 talk "Clearing a suitable landing site..."
 sudo ${tmp}/binstubs/puppet apply -e "class { 'baseline::sudo': }"
 
@@ -75,14 +66,6 @@ notice "Super-user permissions abdicated."
 talk "Launching Drop Pod..."
 ${tmp}/binstubs/puppet apply -e "class { 'baseline': }"
 mv ${tmp} /usr/local/DropPod
-
-if [[ -n "${modules}" ]]; then
-  talk "Installing required modules..."
-  for mod in $modules; do
-    talk "Installing ${mod}..."
-    /usr/local/bin/drop module "${mod}"
-  done
-fi
 
 if [ $# -eq 0 ]; then
   notice 'Finished!  Close this terminal (or source your ~/.profile) to take advantage'
