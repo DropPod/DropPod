@@ -27,7 +27,7 @@ scratch, you can start with a "Beachhead" install:
 
 ``` shell
 # Install Xcode CLT from https://connect.apple.com
-$ bash -c "$(curl -fsSL https://raw.github.com/DropPod/DropPod/launch)"
+$ bash -c "$(curl -fsSL https://raw.github.com/DropPod/DropPod/launch/installer.sh)"
 ```
 
 This script pulls down a minimal **Drop Pod** installation, ready for you to
@@ -38,7 +38,7 @@ as as starting point), you can launch a "Spearhead" install:
 
 ``` shell
 # Install Xcode CLT from https://connect.apple.com
-$ bash -c "$(curl -fsSL https://raw.github.com/DropPod/DropPod/launch)" -- https://gist.github.com/pvande/5035792/raw/apps.pp
+$ bash -c "$(curl -fsSL https://raw.github.com/DropPod/DropPod/launch/installer.sh)" -- https://gist.github.com/pvande/5035792/raw/apps.pp
 ```
 
 Once you've got a basic installation, you've got [Git][Git],
