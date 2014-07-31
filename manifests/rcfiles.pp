@@ -1,18 +1,12 @@
-define baseline::rcfiles($user=$name, $group, $path=undef) {
-  if ($path) {
-    $directory = $path
-  } else {
-    $directory = "/Users/${user}"
-  }
-
+define baseline::rcfiles($user=$name, $group) {
   file {
-    "${directory}/.profile":
+    "/Users/${user}/.profile":
       ensure => present,
       mode   => 700,
       owner  => $user,
       group  => $group,
       source => 'puppet:///modules/baseline/.profile';
-    "${directory}/.profile.d":
+    "/Users/${user}/.profile.d":
       ensure  => directory,
       recurse => true,
       purge   => false,

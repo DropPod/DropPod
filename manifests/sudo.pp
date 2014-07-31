@@ -1,12 +1,4 @@
 class baseline::sudo {
-  # Set up the common dotfiles for every new user account in the system created
-  # after we've installed DropPod.  No reason they should be left behind.
-  baseline::rcfiles { "User Template":
-    user  => "root",
-    group => "wheel",
-    path  => "/System/Library/User Template/English.lproj",
-  }
-
   # Ensure that the /usr/local and /usr/local/bin directories exists.
   file { "/usr/local":
     ensure => directory,

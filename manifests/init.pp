@@ -1,8 +1,6 @@
 class baseline {
   # Set up the common dotfiles for every user account in the system.
-  $users = split($user_accounts, ':')
-  baseline::rcfiles { $users: group => 'staff' }
-
+  baseline::rcfiles { $id: group => 'staff' }
 
   # Since DropPod relies heavily on Git, there's no sense in us preferring to
   # use whatever stale version ships with XCode.
