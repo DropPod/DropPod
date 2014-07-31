@@ -29,6 +29,8 @@ brew() {
 
 # If this script was launched with super-user permissions, we should abort now.
 (( `id -u` )) || abort "Do not run this script with sudo!"
+
+# TODO: Automatically install CLT?
 [[ -x /usr/bin/cc ]] || abort "XCode's Command Line Tools are not installed.
     Install them from connect.apple.com or from inside XCode, then try again."
 
@@ -39,12 +41,13 @@ sudo -v
 
 tmp=$(mktemp -d -t /tmp)
 
-fetch puppetlabs/facter 1.7.1
-fetch puppetlabs/puppet 3.1.0
+fetch puppetlabs/facter 2.0.2
+fetch puppetlabs/puppet 3.6.0
 
 # TODO: This should be a series of module installs from the Forge.
 talk "Setting up baseline modules..."
 mkdir ${tmp}/modules
+
 git clone --depth 1 git://github.com/DropPod/DropPod.git ${tmp}/modules/baseline
 git clone --depth 1 git://github.com/DropPod/dotapp.git ${tmp}/modules/dotapp
 git clone --depth 1 git://github.com/DropPod/homebrew.git ${tmp}/modules/homebrew
