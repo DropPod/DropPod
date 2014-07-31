@@ -5,8 +5,6 @@ DropPod="/usr/local/DropPod"
 command=$1
 shift
 
-export SSL_CERT_FILE=/usr/local/share/ca-bundle.crt
-
 case "$command" in
   pod | pods )
     cat <(echo "include baseline::types") <(for pod; do /usr/bin/ruby -r open-uri -e "puts open('$pod').read"; done) | ${DropPod}/binstubs/puppet apply
