@@ -7,44 +7,51 @@ shift
 
 case "$command" in
   pod | pods )
-    cat <(echo "include baseline::types") <(for pod; do /usr/bin/ruby -r open-uri -e "puts open('$pod').read"; done) | ${DropPod}/binstubs/puppet apply
+    tmpfiles=$($0 __cache__ "$@")
+
+    modules=$(cat $tmpfiles | grep '^#@' | sed 's/^#@[ \t]*//;s/\//-/' | sort -u)
+    $0 module $modules
+
+    cat <(echo "include baseline::types") $tmpfiles | ${DropPod}/binstubs/puppet apply
     ;;
+
   test )
-    cat <(echo "include baseline::types") <(for pod; do /usr/bin/ruby -r open-uri -e "puts open('$pod').read"; done) | ${DropPod}/binstubs/puppet apply --noop 2>&1 | grep '(noop)' -qc
+    tmpfiles=$($0 __cache__ "$@")
+
+    modules=$(cat $tmpfiles | grep '^#@' | sed 's/^#@[ \t]*//;s/\//-/' | sort -u)
+    for mod in $modules; do
+      (${DropPod}/binstubs/puppet module list | grep -q '$mod') || exit 1
+    done
+
+    cat <(echo "include baseline::types") $tmpfiles | ${DropPod}/binstubs/puppet apply --noop 2>&1 | grep '(noop)' -qc
     [[ $? -ne 0 ]]
     exit $?
     ;;
-  module )
-    modules="$(ls $DropPod/modules)"
-    ${DropPod}/binstubs/puppet module install "$@" || exit 1
-    installed=`echo "$modules" | comm -13 - <(ls /usr/local/DropPod/modules/) | uniq`
 
-    pre=""
-    post=""
-    for mod in $installed; do
-      if (${DropPod}/binstubs/puppet apply --noop -e "include ${mod}::sudo::pre" &>/dev/null); then
-        pre="${pre} ${mod}"
-      fi
-      if (${DropPod}/binstubs/puppet apply --noop -e "include ${mod}::sudo::post" &>/dev/null); then
-        post="${post} ${mod}"
-      fi
+  module )
+    for mod; do
+      ${DropPod}/binstubs/puppet module install "$mod" || exit 1
     done
 
-    for mod in $installed; do
-      (
-        if (echo "$pre" | grep "$mod") &>/dev/null; then
-          sudo ${DropPod}/binstubs/puppet apply -e "include ${mod}::sudo::pre"
-        fi
-      ) &&
-      (
-        ${DropPod}/binstubs/puppet apply --noop -e "include ${mod}" &>/dev/null &&
-        ${DropPod}/binstubs/puppet apply -e "include ${mod}"
-      ) &&
-      (
-        if (echo "$post" | grep "$mod") &>/dev/null; then
-          sudo ${DropPod}/binstubs/puppet apply -e "include ${mod}::sudo::post"
-        fi
-      )
+    modules="$(ls $DropPod/modules)"
+
+    for mod in $modules; do
+      ${DropPod}/binstubs/puppet apply --noop -e "include ${mod}" &>/dev/null &&
+      ${DropPod}/binstubs/puppet apply -e "include ${mod}" &&
+      $0 sudo
+    done
+    ;;
+
+  sudo )
+    modules="$(ls $DropPod/modules/*/manifests/sudo.pp | sed 'G;s/.*modules\/\([a-z]*\)\/.*/include \1::sudo/')"
+    sudo ${DropPod}/binstubs/puppet apply -e "include baseline::types" -e "$modules"
+    ;;
+
+  __cache__ )
+    for pod; do
+      tmpfile=$(mktemp -t "$(basename $0).XXXXXX")
+      /usr/bin/ruby -r open-uri -e "File.write('$tmpfile', open('$pod').read + \"\n\")"
+      echo $tmpfile
     done
     ;;
   * )
