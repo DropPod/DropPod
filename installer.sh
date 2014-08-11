@@ -39,8 +39,12 @@ talk "Acquiring super-user permissions..."
 sudo -k
 sudo -v
 
-tmp=$(mktemp -d -t /tmp)
+talk "Clearing a suitable landing site..."
+sudo mkdir -p /usr/local/{bin,DropPod}
+sudo chown -R $(whoami):staff /usr/local && chmod -R 0775 /usr/local
+sudo -k
 
+tmp=$(mktemp -d -t /tmp)
 fetch puppetlabs/facter 2.0.2
 fetch puppetlabs/puppet 3.6.0
 
@@ -49,27 +53,24 @@ talk "Setting up baseline modules..."
 mkdir ${tmp}/modules
 
 git clone --depth 1 git://github.com/DropPod/DropPod.git ${tmp}/modules/baseline
-git clone --depth 1 git://github.com/DropPod/dotapp.git ${tmp}/modules/dotapp
 git clone --depth 1 git://github.com/DropPod/homebrew.git ${tmp}/modules/homebrew
-git clone --depth 1 git://github.com/DropPod/repository.git ${tmp}/modules/repository
 
 talk "Creating required binstubs..."
 mkdir ${tmp}/binstubs
-cp ${tmp}/modules/baseline/files/puppet-wrapper.sh ${tmp}/binstubs/puppet
+mv ${tmp}/* /usr/local/DropPod
+ln -s /usr/local/DropPod/modules/baseline/files/puppet-wrapper.sh /usr/local/DropPod/binstubs/puppet
+ln -s /usr/local/DropPod/modules/baseline/files/drop /usr/local/bin/drop
 
-talk "Clearing a suitable landing site..."
-sudo ${tmp}/binstubs/puppet apply -e "class { 'baseline::sudo': }"
-
-sudo -k
-notice "Super-user permissions abdicated."
+talk "Preparing for launch..."
+/usr/local/bin/drop init
 
 talk "Launching Drop Pod..."
-${tmp}/binstubs/puppet apply -e "class { 'baseline': }"
-mv ${tmp} /usr/local/DropPod
+/usr/local/DropPod/binstubs/puppet apply -e "class { 'baseline': }"
 
-if [ $# -eq 0 ]; then
-  notice 'Finished!  Close this terminal (or source your ~/.profile) to take advantage'
-  notice 'of your newly configured environment!'
-else
-  exec /usr/local/bin/drop pods "$@"
+if [ $# -gt 0 ]; then
+  talk "Deploying additional resources..."
+  /usr/local/bin/drop pods "$@" || exit 1
 fi
+
+notice 'Finished!  Close this terminal (or source your ~/.profile) to take advantage'
+notice 'of your newly configured environment!'
