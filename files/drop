@@ -13,6 +13,7 @@ case "$command" in
   update )
     cd $DropPod/modules/baseline
     git pull
+    ;;
   pod | pods )
     tmpfiles=$($0 __cache__ "$@")
 
