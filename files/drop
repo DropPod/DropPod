@@ -6,6 +6,10 @@ command=$1
 shift
 
 case "$command" in
+  init )
+    git clone --depth 1 git://github.com/DropPod/dotapp.git ${DropPod}/modules/dotapp
+    git clone --depth 1 git://github.com/DropPod/repository.git ${DropPod}/modules/repository
+    ;;
   pod | pods )
     tmpfiles=$($0 __cache__ "$@")
 
