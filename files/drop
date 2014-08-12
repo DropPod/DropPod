@@ -41,13 +41,11 @@ case "$command" in
       ${DropPod}/binstubs/puppet module install "$mod" || exit 1
     done
 
-    modules="$(ls $DropPod/modules)"
+    modules="$(ls $DropPod/modules/*/manifests/init.pp | sed 'G;s/.*modules\/\([a-z]*\)\/.*/include \1/')"
+    ${DropPod}/binstubs/puppet apply --noop -e "include baseline::types" -e "$modules" &>/dev/null ||
+    sudo ${DropPod}/binstubs/puppet apply -e "include baseline::types" -e "$modules"
 
-    for mod in $modules; do
-      ${DropPod}/binstubs/puppet apply --noop -e "include ${mod}" &>/dev/null ||
-      ${DropPod}/binstubs/puppet apply -e "include ${mod}" &&
-      $0 sudo
-    done
+    $0 sudo
     ;;
 
   sudo )
