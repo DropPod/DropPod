@@ -40,7 +40,7 @@ case "$command" in
     modules="$(ls $DropPod/modules)"
 
     for mod in $modules; do
-      ${DropPod}/binstubs/puppet apply --noop -e "include ${mod}" &>/dev/null &&
+      ${DropPod}/binstubs/puppet apply --noop -e "include ${mod}" &>/dev/null ||
       ${DropPod}/binstubs/puppet apply -e "include ${mod}" &&
       $0 sudo
     done
