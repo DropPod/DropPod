@@ -48,6 +48,7 @@ case "$command" in
 
   sudo )
     modules="$(ls $DropPod/modules/*/manifests/sudo.pp | sed 'G;s/.*modules\/\([a-z]*\)\/.*/include \1::sudo/')"
+    ${DropPod}/binstubs/puppet apply --noop -e "include baseline::types" -e "$modules" &>/dev/null ||
     sudo ${DropPod}/binstubs/puppet apply -e "include baseline::types" -e "$modules"
     ;;
 
