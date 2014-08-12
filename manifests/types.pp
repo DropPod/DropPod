@@ -40,6 +40,30 @@ define rcfile($content=undef, $source=undef) {
   }
 }
 
+# A type for managing Git config options.
+#
+# * name - The name of the managed configuration option
+# * [value] - The value to assign to that configuration option; if undefined, we
+#             will unset the configured value
+#
+#    gitconfig { 'user.email':
+#      value => 'email@example.com',
+#    }
+define gitconfig($value=undef) {
+  if ($value) {
+    $command = "git config --global ${name} '${value}'"
+  } else {
+    $command = "git config --global --unset ${name}"
+  }
+
+  exec { "Git Config: ${title}":
+    environment => ["HOME=/Users/${id}"],
+    command     => $command,
+    unless      => "/bin/test \"$(git config --global ${name})\" = '${value}'",
+    path        => ["/usr/local/bin"],
+  }
+}
+
 # A type for managing development projects.
 #
 # * name - The name of the project's directory
@@ -61,7 +85,7 @@ define project($source = $title, $target = "/Users/${id}/Projects") {
     $dirname = $name
   }
   $directory = "${target}/${dirname}"
-  
+
   repository { "${title}": name => $name, source => $source, target => $target }
   exec { "Configure Project '${title}'":
     command     => "/usr/local/bin/drop pod ${directory}/.development.pp",

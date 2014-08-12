@@ -106,6 +106,14 @@ next terminal creation.
 * *source* - Indicates that the the configuration file should be copied from
              the specified location; if absent, defers to `content`.
 
+#### gitconfig ####
+
+This type manages Git configuration options.
+
+* *name* - The name of the managed configuration option.
+* *value* - The value to assign to that configuration option; if undefined, we
+            will unset the configured value.
+
 Future
 ======
 

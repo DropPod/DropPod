@@ -1,4 +1,6 @@
 class baseline {
+  include baseline::types
+
   # Set up the common dotfiles for every user account in the system.
   baseline::rcfiles { $id: group => 'staff' }
 
@@ -11,12 +13,9 @@ class baseline {
 
   # Given the platform we're on, there's no reason we shouldn't configure the
   # osxkeychain credential helper by default.
-  exec { "Configure git-credential-osxkeychain":
-    environment => ["HOME=/Users/${id}"],
-    command     => "git config --global credential.helper osxkeychain",
-    unless      => "test `git config --global credential.helper` = 'osxkeychain'",
-    path        => ["/usr/local/bin", "/bin"],
-    require     => Package['git'],
+  gitconfig { 'credential.helper':
+    value   => 'osxkeychain',
+    require => Package['git'],
   }
 
   $init   = "git init -q"
