@@ -9,30 +9,6 @@ class baseline::sudo {
     notify => Exec["Set /usr/local permissions"],
   }
 
-  # The `drop` command is the user's primary interaction with DropPod; we
-  # should ensure that it's properly seated in the $PATH.
-  file { "/usr/local/bin/drop":
-    ensure => present,
-    mode   => 0775,
-    source => "puppet:///modules/baseline/drop",
-    notify => Exec["Set /usr/local permissions"],
-  }
-
-  $init   = "git init -q"
-  $test   = "(git remote -v | grep origin | grep 'https://github.com/mxcl/homebrew (fetch)')"
-  $remote = "(${test} || git remote add origin https://github.com/mxcl/homebrew)"
-  $fetch  = "git fetch origin master:refs/remotes/origin/master -n --depth=1"
-  $reset  = "git reset --hard origin/master"
-  exec { "Install Homebrew":
-    environment => ["GIT_DIR=/usr/local/.git", "GIT_WORK_TREE=/usr/local"],
-    command     => "${init} && ${remote} && ${fetch} && ${reset}",
-    creates     => "/usr/local/bin/brew",
-    group       => "staff",
-    path        => ["/usr/local/bin", "/usr/bin"],
-    require     => File["/usr/local"],
-    notify      => Exec["Set /usr/local permissions"],
-  }
-
   # We need to split the permissions assertions away from the existence
   # assertion to avoid a dependency cycle.  We can't use the File resource type
   # to manage permissions because that would create a dependency cycle, which
