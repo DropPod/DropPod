@@ -41,7 +41,7 @@ case "$command" in
       ${DropPod}/binstubs/puppet module install "$mod" || exit 1
     done
 
-    modules="$(ls $DropPod/modules/*/manifests/init.pp | sed 'G;s/.*modules\/\([a-z]*\)\/.*/include \1/')"
+    modules="$(comm -12 <(ls ${DropPod}/modules/*/manifests/init.pp | sed 's/.*modules\/\([a-z]*\)\/.*/\1/') <(grep -R '^\s*class [a-z_:]\+ {' ${DropPod}/modules/*/manifests/init.pp | sed 's/.*class \([a-z]*\).*/\1/') | sed 's/^/include /')"
     ${DropPod}/binstubs/puppet apply --noop -e "include baseline::types" -e "$modules" &>/dev/null ||
     sudo ${DropPod}/binstubs/puppet apply -e "include baseline::types" -e "$modules"
 
