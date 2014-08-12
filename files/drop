@@ -10,6 +10,9 @@ case "$command" in
     git clone --depth 1 git://github.com/DropPod/dotapp.git ${DropPod}/modules/dotapp
     git clone --depth 1 git://github.com/DropPod/repository.git ${DropPod}/modules/repository
     ;;
+  update )
+    cd $DropPod/modules/baseline
+    git pull
   pod | pods )
     tmpfiles=$($0 __cache__ "$@")
 
