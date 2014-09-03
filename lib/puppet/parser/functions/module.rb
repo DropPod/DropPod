@@ -1,5 +1,6 @@
 module Puppet::Parser::Functions
   newfunction(:module) do |args|
+    return if Puppet[:noop]
     uninstalled = args.reject { |mod| Puppet::Module.find(mod) }
     unless uninstalled.empty?
       raise Puppet::ParseError, <<-MSG.gsub(/^        /, '')
