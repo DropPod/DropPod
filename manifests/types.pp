@@ -33,7 +33,7 @@ define application($source, $ensure="installed") {
 define rcfile($content=undef, $source=undef) {
   file { "/Users/${id}/.profile.d/${name}.sh":
     ensure  => present,
-    mode    => 644,
+    mode    => 700,
     owner   => $id,
     content => $content,
     source  => $source,
